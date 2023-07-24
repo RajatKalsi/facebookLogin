@@ -2,6 +2,7 @@ import Image from 'next/image'
 import { Inter } from 'next/font/google'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
+import GoogleMap from './map'
 // declare let FB: any;
 const inter = Inter({ subsets: ['latin'] })
 export default function Home() {
@@ -26,7 +27,7 @@ export default function Home() {
     const win = window as any
     win.fbAsyncInit = () => {
       (window as any).FB?.init({
-        appId: "554330433421576",
+        appId: process.env.NEXT_PUBLIC_FACEBOOK_APP_ID,
         cookie: true,
         xfbml: true,
         version: "v17.0"
@@ -61,16 +62,16 @@ export default function Home() {
       email: ''
     })
   }
-  const loadGoogleMapScript = (callback: any) => {
-    if (typeof (window as any).google === 'object' && typeof (window as any).google.maps === 'object') {
-        callback();
-    } else {
-        const googleMapScript = document.createElement("script");
-        googleMapScript.src = `https://accounts.google.com/gsi/client`;
-        window.document.body.appendChild(googleMapScript);
-        googleMapScript.addEventListener("load", callback);
-    }
-}
+//   const loadGoogleMapScript = (callback: any) => {
+//     if (typeof (window as any).google === 'object' && typeof (window as any).google.maps === 'object') {
+//         callback();
+//     } else {
+//         const googleMapScript = document.createElement("script");
+//         googleMapScript.src = `https://accounts.google.com/gsi/client`;
+//         window.document.body.appendChild(googleMapScript);
+//         googleMapScript.addEventListener("load", callback);
+//     }
+// }
 
   const handleCredentialResponse = async(value:any) => {
     console.log(value,"value");
@@ -80,7 +81,6 @@ export default function Home() {
   }, [])
   
   const GoogleLogin=async()=>{
-    // debugger
     const win = window as any
     win?.google?.accounts?.id?.initialize({
       client_id: process.env.NEXT_PUBLIC_GOOGLE_LOGIN_KEY,
@@ -88,25 +88,11 @@ export default function Home() {
     });
     win?.google?.accounts?.id?.prompt();
   }
-  useEffect(() => {
-  
-    // loadGoogleMapScript( ()=> {
-    //   const win = window as any
-    //   win.google.accounts.id.initialize({
-    //     client_id: '977968272550-mkabloghj0at836s4f2dq9rje7spf0s8.apps.googleusercontent.com',
-    //     callback: handleCredentialResponse
-    //   });
-    //   win.google.accounts.id.prompt();
-    // })
-  }, [])
-  useEffect(()=>{
-
-  },[])
   return (
     <main
       className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}
     >
-
+<>
       {/* <h1 className='bg-success'>sdha</h1> */}
       <button className='btn btn-danger' onClick={logout}>Logout</button>
       <button className='btn btn-success ms-5' onClick={loginWithFacebook} >LOGIN</button>
@@ -122,6 +108,8 @@ export default function Home() {
         <button type='submit' className='btn btn-danger mt-4 ms-4'>Submit</button>
       <button id="googlelogin" onClick={GoogleLogin} type="button">Login With Google</button>
       </form>
+      <GoogleMap/>
+      </>
     </main>
   )
 }
